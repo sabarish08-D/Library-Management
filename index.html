@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vintage Library - Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="vintage-header">
+            <h1>📚 Library Management System</h1>
+            <p class="subtitle">Your Gateway to Literary Treasures</p>
+        </div>
+
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="showTab('register')">Register</button>
+                <button class="tab-btn" onclick="showTab('login')">Login</button>
+            </div>
+
+            <!-- Registration Form -->
+            <div id="register-tab" class="auth-tab active">
+                <form id="register-form" class="vintage-form">
+                    <h2>Create Your Account</h2>
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" required>
+                        <span class="error-message" id="reg-name-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email ID</label>
+                        <input type="email" id="reg-email" required>
+                        <span class="error-message" id="reg-email-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Password</label>
+                        <input type="password" id="reg-password" required>
+                        <span class="error-message" id="reg-password-error"></span>
+                        <small>Password must be at least 8 characters with uppercase, lowercase, and number</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-confirm-password">Confirm Password</label>
+                        <input type="password" id="reg-confirm-password" required>
+                        <span class="error-message" id="reg-confirm-password-error"></span>
+                    </div>
+                    <button type="submit" class="vintage-btn">Register</button>
+                </form>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-tab" class="auth-tab">
+                <form id="login-form" class="vintage-form">
+                    <h2>Welcome Back</h2>
+                    <div class="form-group">
+                        <label for="login-email">Email ID</label>
+                        <input type="email" id="login-email" required>
+                        <span class="error-message" id="login-email-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                        <span class="error-message" id="login-password-error"></span>
+                    </div>
+                    <button type="submit" class="vintage-btn">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="message-container"></div>
+    </div>
+
+    <!-- Book Management Page (Hidden initially) -->
+    <div id="book-management-page" class="hidden">
+        <div class="vintage-header">
+            <h1>📚 Vintage Library Management</h1>
+            <div class="user-info">
+                <span id="user-name"></span>
+                <button class="vintage-btn-small" onclick="logout()">Logout</button>
+                <button class="vintage-btn-small" onclick="showCart()">Cart (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+
+        <nav class="vintage-nav">
+            <button class="nav-btn active" onclick="showSection('books')">Book Management</button>
+            <button class="nav-btn" onclick="showSection('bestsellers')">Top 10 Best Sellers</button>
+            <button class="nav-btn" onclick="showSection('cart')">Shopping Cart</button>
+        </nav>
+
+        <!-- Book Management Section -->
+        <div id="books-section" class="content-section active">
+            <div class="section-header">
+                <h2>Book Management</h2>
+                <button class="vintage-btn" onclick="openAddBookModal()">+ Add New Book</button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search by title, author, or category..." class="vintage-input">
+                <button class="vintage-btn" onclick="searchBooks()">Search</button>
+                <button class="vintage-btn-secondary" onclick="clearSearch()">Clear</button>
+            </div>
+
+            <div class="books-table-container">
+                <table class="vintage-table">
+                    <thead>
+                        <tr>
+                            <th>Book ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="books-table-body">
+                        <!-- Books will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top 10 Best Sellers Section -->
+        <div id="bestsellers-section" class="content-section">
+            <div class="section-header">
+                <h2>Top 10 Best Selling Books</h2>
+            </div>
+            <div class="bestsellers-grid" id="bestsellers-grid">
+                <!-- Best sellers will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Cart Section -->
+        <div id="cart-section" class="content-section">
+            <div class="section-header">
+                <h2>Shopping Cart</h2>
+            </div>
+            <div id="cart-items" class="cart-container">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Total: ₹<span id="cart-total">0.00</span></strong>
+                </div>
+                <button class="vintage-btn" onclick="proceedToPayment()" id="checkout-btn" disabled>Proceed to Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Book Modal -->
+    <div id="book-modal" class="modal hidden">
+        <div class="modal-content vintage-modal">
+            <span class="close" onclick="closeBookModal()">&times;</span>
+            <h2 id="modal-title">Add New Book</h2>
+            <form id="book-form" class="vintage-form">
+                <div class="form-group">
+                    <label for="book-id">Book ID</label>
+                    <input type="text" id="book-id" required>
+                    <span class="error-message" id="book-id-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="book-title">Title</label>
+                    <input type="text" id="book-title" required>
+                    <span class="error-message" id="book-title-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="book-author">Author</label>
+                    <input type="text" id="book-author" required>
+                    <span class="error-message" id="book-author-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="book-category">Category</label>
+                    <select id="book-category" required>
+                        <option value="">Select Category</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Science Fiction">Science Fiction</option>
+                        <option value="Biography">Biography</option>
+                        <option value="History">History</option>
+                        <option value="Self-Help">Self-Help</option>
+                    </select>
+                    <span class="error-message" id="book-category-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="book-price">Price (₹)</label>
+                    <input type="number" id="book-price" step="1" min="0" required>
+                    <span class="error-message" id="book-price-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="book-description">Description</label>
+                    <textarea id="book-description" rows="3"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="vintage-btn">Save</button>
+                    <button type="button" class="vintage-btn-secondary" onclick="closeBookModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Book Preview Modal -->
+    <div id="book-preview-modal" class="modal hidden">
+        <div class="modal-content vintage-modal preview-modal">
+            <span class="close" onclick="closeBookPreview()">&times;</span>
+            <div id="book-preview-content">
+                <!-- Book preview will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal hidden">
+        <div class="modal-content vintage-modal">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2>Proceed to Payment</h2>
+            <form id="payment-form" class="vintage-form">
+                <div class="form-group">
+                    <label for="card-name">Cardholder Name</label>
+                    <input type="text" id="card-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="card-expiry">Expiry Date</label>
+                        <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-cvv">CVV</label>
+                        <input type="text" id="card-cvv" placeholder="123" maxlength="3" required>
+                    </div>
+                </div>
+                <div class="payment-summary">
+                    <h3>Order Summary</h3>
+                    <div id="payment-items"></div>
+                    <div class="payment-total">
+                        <strong>Total: ₹<span id="payment-total">0.00</span></strong>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="vintage-btn">Complete Payment</button>
+                    <button type="button" class="vintage-btn-secondary" onclick="closePaymentModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
